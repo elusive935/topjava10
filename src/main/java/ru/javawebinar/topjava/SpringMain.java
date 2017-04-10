@@ -25,7 +25,8 @@ public class SpringMain {
 //            System.out.println(controller.save(2, new Meal(LocalDateTime.now(), "desc", 1000, 1)));
 //            System.out.println(controller.delete(1, 2));
 //            System.out.println(controller.getAll(1));
-            System.out.println(controller.getFiltered(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 31), LocalTime.of(0, 0), LocalTime.of(23, 59)));
+//            System.out.println(controller.getFiltered(LocalDate.of(2015, Month.MAY, 30), LocalDate.of(2015, Month.MAY, 31), LocalTime.of(0, 0), LocalTime.of(23, 59)));
+            System.out.println(controller.getFiltered("2015-05-30", "2015-05-31", "10-00", "19-00"));
 
 
 

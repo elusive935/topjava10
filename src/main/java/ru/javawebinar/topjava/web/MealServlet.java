@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -33,29 +34,26 @@ import java.util.Objects;
  */
 public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
-//    public static ConfigurableApplicationContext springContext;
+    public static ConfigurableApplicationContext springContext;
 
-    @Autowired
     private MealRestController mealRestController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-//        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        mealRestController = springContext.getBean(MealRestController.class);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
-
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.valueOf(request.getParameter("calories")));
-
-        LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealRestController.save(meal);
+        String userId = request.getParameter("userId");
+        if (userId != null) {
+            AuthorizedUser.setId(Integer.valueOf(userId));
+        } else {
+            mealRestController.save(request.getParameterMap());
+        }
         response.sendRedirect("meals");
     }
 
@@ -81,7 +79,14 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 LOG.info("getAll");
-                request.setAttribute("meals", mealRestController.getAll());
+                if (request.getParameter("startDate") != null) {
+                    request.setAttribute("meals", mealRestController.getFiltered(request.getParameter("startDate"),
+                                                                                        request.getParameter("endDate"),
+                                                                                        request.getParameter("startTime"),
+                                                                                        request.getParameter("endTime")));
+                } else {
+                    request.setAttribute("meals", mealRestController.getAll());
+                }
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

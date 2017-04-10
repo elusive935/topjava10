@@ -18,7 +18,27 @@
 <body>
 <section>
     <h2><a href="index.html">Home</a></h2>
+
+
+    <form method="post">
+        Choose userId:
+        <select name="userId" title="userId">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <input type="submit" value="Authorize">
+    </form>
+
     <h2>Meal list</h2>
+
+    <form method="get" action="meals">
+        From date <input type="date" value="" name="startDate">
+        To date <input type="date" value="" name="endDate"><br><br>
+        From time <input type="time" value="" name="startTime">
+        To time <input type="time" value="" name="endTime"><br><br>
+        <button type="submit">Filter</button><br><br>
+    </form>
+
     <a href="meals?action=create">Add Meal</a>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
