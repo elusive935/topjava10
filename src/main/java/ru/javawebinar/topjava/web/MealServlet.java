@@ -46,14 +46,20 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
+    public void destroy() {
+        super.destroy();
+        springContext.close();
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String userId = request.getParameter("userId");
-        if (userId != null) {
-            AuthorizedUser.setId(Integer.valueOf(userId));
-        } else {
-            mealRestController.save(request.getParameterMap());
-        }
+        String id = request.getParameter("id");
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.valueOf(request.getParameter("calories")));
+        mealRestController.save(meal);
         response.sendRedirect("meals");
     }
 

@@ -19,16 +19,6 @@
 <section>
     <h2><a href="index.html">Home</a></h2>
 
-
-    <form method="post">
-        Choose userId:
-        <select name="userId" title="userId">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
-        <input type="submit" value="Authorize">
-    </form>
-
     <h2>Meal list</h2>
 
     <form method="get" action="meals">

@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
+import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -23,27 +24,21 @@ public class MealServiceImpl implements MealService {
     @Override
     public Meal save(int userId, Meal meal) {
         Meal result = repository.save(userId, meal);
-        if (result == null) {
-            throw new NotFoundException("Cannot save meal " + meal + " for user with id = " + userId);
-        }
+        ValidationUtil.checkNotFound(result, "userId = "+userId);
         return result;
     }
 
     @Override
     public boolean delete(int userId, int id) {
         boolean result = repository.delete(userId, id);
-        if (!result) {
-            throw new NotFoundException("Meal with id = " + id + " not found for user with id = " + userId);
-        }
-        return true;
+        ValidationUtil.checkNotFound(result, "userId = "+userId);
+        return result;
     }
 
     @Override
     public Meal get(int userId, int id) {
         Meal result = repository.get(userId, id);
-        if (result == null) {
-            throw new NotFoundException("Cannot find meal with id = " + id + " for user with id = " + userId);
-        }
+        ValidationUtil.checkNotFound(result, "userId = "+userId);
         return result;
     }
 

@@ -19,14 +19,11 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-//        for (int i = 0; i < 10; i++) {
-//            repository.put(counter.incrementAndGet(), new User(i, "user"+(50-i), "email", "password", Role.ROLE_ADMIN));
-//        }
-        repository.put(counter.incrementAndGet(), new User(0, "Alena", "email", "password", Role.ROLE_ADMIN));
-        repository.put(counter.incrementAndGet(), new User(0, "Sereja", "email2", "password", Role.ROLE_ADMIN));
-        repository.put(counter.incrementAndGet(), new User(0, "Kolya", "email", "password", Role.ROLE_ADMIN));
-        repository.put(counter.incrementAndGet(), new User(0, "Sereja", "email1", "password", Role.ROLE_ADMIN));
-        repository.put(counter.incrementAndGet(), new User(0, "Sereja", "email3", "password", Role.ROLE_ADMIN));
+        save(new User(0, "Alena", "email", "password", Role.ROLE_ADMIN));
+        save(new User(0, "Sereja", "email2", "password", Role.ROLE_ADMIN));
+        save(new User(0, "Kolya", "email", "password", Role.ROLE_ADMIN));
+        save(new User(0, "Sereja", "email1", "password", Role.ROLE_ADMIN));
+        save(new User(0, "Sereja", "email3", "password", Role.ROLE_ADMIN));
     }
 
     @Override
@@ -54,8 +51,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         LOG.info("getAll");
         return new ArrayList<>(repository.values()).stream()
-                .sorted(Comparator.comparing(User::getName))
-                .sorted(Comparator.comparing(User::getEmail))
+                .sorted(Comparator.comparing(User::getName).thenComparing(User::getEmail))
                 .collect(Collectors.toList());
     }
 

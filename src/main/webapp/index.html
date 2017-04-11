@@ -8,6 +8,15 @@
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava10" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
 <ul>
+    <form method="post" action="users">
+        <select name="userId" title="userId" onchange="this.form.submit()">
+            <option selected disabled>Choose userId</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </form>
+    <br>
+
     <li><a href="users">User List</a></li>
     <li><a href="meals">Meal List</a></li>
 </ul>

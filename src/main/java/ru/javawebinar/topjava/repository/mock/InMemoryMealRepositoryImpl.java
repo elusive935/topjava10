@@ -28,7 +28,6 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     public InMemoryMealRepositoryImpl() {
 
         for (Meal meal: MealsUtil.MEALS) {
-            meal.setUserId(1);
             save(1, meal);
         }
     }
@@ -37,6 +36,11 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     public Meal save(int userId, Meal meal) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+        } else {
+            Meal getMeal = repository.get(meal.getId());
+            if (getMeal.getUserId() != userId) {
+                return null;
+            }
         }
         meal.setUserId(userId);
         repository.put(meal.getId(), meal);
@@ -49,8 +53,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal == null || meal.getUserId() != userId) {
             return false;
         }
-        repository.remove(id);
-        return true;
+        return repository.remove(id) != null;
     }
 
     @Override
@@ -71,8 +74,8 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
         return repository.values().stream()
                 .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime))
-                .filter(meal -> DateTimeUtil.isBetweenDate(meal.getDateTime().toLocalDate(), startDate, endDate))
+                .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime().toLocalDate(), startDate, endDate))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }
