@@ -12,19 +12,20 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class MealRestController {
     private static final Logger LOG = LoggerFactory.getLogger(MealRestController.class);
 
+    private final MealService service;
+
     @Autowired
-    private MealService service;
+    public MealRestController(MealService service) {
+        this.service = service;
+    }
 
     public Meal save(Meal meal){
         LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
@@ -48,11 +49,11 @@ public class MealRestController {
         sDate = parseDate(startDate, LocalDate.MIN);
         eDate = parseDate(endDate, LocalDate.MAX);
 
-        final LocalTime sTime = parseTime(startTime, LocalTime.MIN);
-        final LocalTime eTime = parseTime(endTime, LocalTime.MAX);
+        final LocalTime sTime = DateTimeUtil.parseTime(startTime, LocalTime.MIN);
+        final LocalTime eTime = DateTimeUtil.parseTime(endTime, LocalTime.MAX);
 
         return MealsUtil.getFilteredWithExceeded(service.getFiltered(AuthorizedUser.id(), sDate, eDate), sTime, eTime,
-                                                                MealsUtil.DEFAULT_CALORIES_PER_DAY);
+                                                                AuthorizedUser.getCaloriesPerDay());
     }
 
     private LocalDate parseDate(String date, LocalDate defaultValue){
@@ -65,13 +66,5 @@ public class MealRestController {
         return result;
     }
 
-    private LocalTime parseTime(String time, LocalTime defaultValue){
-        LocalTime result;
-        try {
-            result = LocalTime.parse(time);
-        } catch (DateTimeParseException e) {
-            result = defaultValue;
-        }
-        return result;
-    }
+
 }

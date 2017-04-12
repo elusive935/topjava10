@@ -21,11 +21,11 @@
 
     <h2>Meal list</h2>
 
-    <form method="get" action="meals">
-        From date <input type="date" value="" name="startDate">
-        To date <input type="date" value="" name="endDate"><br><br>
-        From time <input type="time" value="" name="startTime">
-        To time <input type="time" value="" name="endTime"><br><br>
+    <form method="post" action="meals?action=filter">
+        From date <input type="date" value="${param.startDate}" name="startDate">
+        To date <input type="date" value="${param.endDate}" name="endDate"><br><br>
+        From time <input type="time" value="${param.startTime}" name="startTime">
+        To time <input type="time" value="${param.endTime}" name="endTime"><br><br>
         <button type="submit">Filter</button><br><br>
     </form>
 
