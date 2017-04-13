@@ -14,10 +14,10 @@ INSERT INTO user_roles (role, user_id) VALUES
   ('ROLE_ADMIN', 100001);
 
 INSERT INTO meals (user_id, datetime, description, calories) VALUES
-  (100000, '2017-04-10 20:00:00'::timestamp, 'Breakfast', 500),
-  (100000, '2017-04-10 20:00:00'::timestamp, 'Lunch', 1000),
+  (100000, '2017-04-10 08:00:00'::timestamp, 'Breakfast', 500),
+  (100000, '2017-04-10 13:00:00'::timestamp, 'Lunch', 1000),
   (100000, '2017-04-10 20:00:00'::timestamp, 'Dinner', 800),
-  (100000, '2017-04-11 20:00:00'::timestamp, 'Breakfast', 500),
-  (100000, '2017-04-11 20:00:00'::timestamp, 'Lunch', 1200),
-  (100001, '2017-04-11 20:00:00'::timestamp, 'Breakfast', 550),
-  (100001, '2017-04-11 20:00:00'::timestamp, 'Lunch', 850);
+  (100000, '2017-04-11 08:00:00'::timestamp, 'Breakfast', 500),
+  (100000, '2017-04-11 13:00:00'::timestamp, 'Lunch', 1200),
+  (100001, '2017-04-11 08:00:00'::timestamp, 'Breakfast', 550),
+  (100001, '2017-04-11 13:00:00'::timestamp, 'Lunch', 850);
