@@ -16,7 +16,6 @@ public class Meal extends BaseEntity {
     private int calories;
 
     public Meal() {
-        super(null);
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
