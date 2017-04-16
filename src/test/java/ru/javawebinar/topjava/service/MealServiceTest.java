@@ -95,9 +95,9 @@ public class MealServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void testUpdateNotFound() throws Exception {
-        Meal meal = service.get(INDEX_USER_5, USER_ID);
-        meal.setCalories(100500);
-        meal.setDescription(meal.getDescription()+"suffix");
-        service.update(meal, ADMIN_ID);
+        Meal meal = new Meal(INDEX_USER_5, MEAL_USER_5.getDateTime(), MEAL_USER_2.getDescription()+"suffix", 100500);
+        service.update(meal, USER_ID);
+        Meal getMeal = service.get(INDEX_USER_5, ADMIN_ID);
+        MATCHER.assertEquals(meal, getMeal);
     }
 }
