@@ -69,9 +69,7 @@ public class MealServiceTest {
 
     @Test
     public void testUpdate() throws Exception {
-        Meal meal = MEAL_USER_2;
-        meal.setCalories(100500);
-        meal.setDescription(meal.getDescription()+"suffix");
+        Meal meal = new Meal(INDEX_USER_2, MEAL_USER_2.getDateTime(), MEAL_USER_2.getDescription()+"suffix", 100500);
         service.update(meal, USER_ID);
         Meal getMeal = service.get(INDEX_USER_2, USER_ID);
         MATCHER.assertEquals(meal, getMeal);
