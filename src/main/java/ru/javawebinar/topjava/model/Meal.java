@@ -1,7 +1,9 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,14 +12,35 @@ import java.time.LocalTime;
  * GKislin
  * 11.01.2015.
  */
+
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal u WHERE u.id=:id"),
+        @NamedQuery(name = Meal.BY_EMAIL, query = "SELECT u FROM Meal u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT u FROM Meal u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email"),
+})
+
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"dateTime", "user"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends BaseEntity {
+
+    public static final String DELETE = "Meal.delete";
+    public static final String BY_EMAIL = "Meal.getByEmail";
+    public static final String ALL_SORTED = "Meal.getAllSorted";
+
+    @Column(name = "dateTime", nullable = false, unique = true)
     private LocalDateTime dateTime;
 
+    @Column(name="description", nullable = false)
+    @NotBlank
     private String description;
 
+    @Column(name="calories", nullable = false)
+    @NotNull
     private int calories;
 
+    @Column(name="user", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private User user;
 
     public Meal() {
