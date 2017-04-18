@@ -27,10 +27,8 @@ public class JpaMealRepositoryImpl implements MealRepository {
     @Transactional
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
-            Query query = em.createNamedQuery(Meal.GET_AUTH_USER, User.class);
-            query.setParameter("userId", AuthorizedUser.id());
-            User user = DataAccessUtils.singleResult((List<User>)query.getResultList());
-            meal.setUser(user);
+            User ref = em.getReference(User.class, userId);
+            meal.setUser(ref);
             em.persist(meal);
             return meal;
         } else {
