@@ -56,9 +56,10 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("userId", userId);
-        return em.find(Meal.class, id, properties);
+        Query query = em.createNamedQuery(Meal.GET_BY_ID);
+        query.setParameter("id", id);
+        query.setParameter("userId", userId);
+        return DataAccessUtils.singleResult((List<Meal>)query.getResultList());
     }
 
     @Override

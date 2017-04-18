@@ -19,6 +19,7 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_SORTED_FILTERED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime BETWEEN ?1 AND ?2 ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.GET_AUTH_USER, query = "SELECT u FROM User u WHERE u.id=:userId"),
+        @NamedQuery(name = Meal.GET_BY_ID, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
 })
 
 @Entity
@@ -30,6 +31,7 @@ public class Meal extends BaseEntity {
     public static final String ALL_SORTED = "Meal.getAllSorted";
     public static final String ALL_SORTED_FILTERED = "Meal.getAllSortedFiltered";
     public static final String GET_AUTH_USER = "Meal.getAuthUser";
+    public static final String GET_BY_ID = "Meal.getById";
 
     @Column(name = "date_time", nullable = false, unique = true)
     private LocalDateTime dateTime;
