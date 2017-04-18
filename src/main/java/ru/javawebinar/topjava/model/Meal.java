@@ -14,24 +14,20 @@ import java.time.LocalTime;
  */
 
 @NamedQueries({
-        @NamedQuery(name = Meal.SAVE, query = "UPDATE Meal m SET m.description=:description, m.calories=:calories, m.dateTime=:date_time WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.ALL_SORTED_FILTERED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime BETWEEN ?1 AND ?2 ORDER BY m.dateTime DESC"),
-        @NamedQuery(name = Meal.GET_BY_ID, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
 })
 
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"date_time", "user_id"}, name = "meals_unique_user_datetime_idx")})
 public class Meal extends BaseEntity {
 
-    public static final String SAVE = "Meal.save";
     public static final String DELETE = "Meal.delete";
     public static final String ALL_SORTED = "Meal.getAllSorted";
     public static final String ALL_SORTED_FILTERED = "Meal.getAllSortedFiltered";
-    public static final String GET_BY_ID = "Meal.getById";
 
-    @Column(name = "date_time", nullable = false, unique = true)
+    @Column(name = "date_time", nullable = false)
     private LocalDateTime dateTime;
 
     @Column(name="description", nullable = false)

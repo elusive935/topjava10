@@ -4,11 +4,11 @@ import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.Stopwatch;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,11 +19,9 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LongSummaryStatistics;
 import java.util.Map;
 
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -52,17 +50,11 @@ public class MealServiceTest {
     public final ExpectedException thrown = ExpectedException.none();
 
     @Rule
-    public final TestRule watcher = new TestWatcher() {
+    public final TestRule watcher = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            timeStamp = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            Long tookMs = System.currentTimeMillis() - timeStamp;
-            System.out.println("Test took " + tookMs + " ms");
-            statistics.put(description.getMethodName(), tookMs);
+        protected void finished(long nanos, Description description) {
+            System.out.println("Test took " + nanos/1000000 + " ms");
+            statistics.put(description.getMethodName(), nanos/1000000);
         }
     };
 
