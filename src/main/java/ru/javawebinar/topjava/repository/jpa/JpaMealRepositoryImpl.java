@@ -1,9 +1,7 @@
 package ru.javawebinar.topjava.repository.jpa;
 
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -12,9 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
@@ -32,8 +28,8 @@ public class JpaMealRepositoryImpl implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            Meal getMeal = em.find(Meal.class, meal.getId());
-            if (getMeal.getUser().getId() != userId) {
+            Meal mealById = em.find(Meal.class, meal.getId());
+            if (mealById == null || mealById.getUser().getId() != userId) {
                 return null;
             }
             return em.merge(meal);
@@ -51,8 +47,11 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal getMeal = em.find(Meal.class, id);
-        return getMeal.getUser().getId() == userId ? getMeal : null;
+        Meal mealById = em.find(Meal.class, id);
+        if (mealById == null || mealById.getUser().getId() != userId) {
+            return null;
+        }
+        return mealById;
     }
 
     @Override

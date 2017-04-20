@@ -1,14 +1,16 @@
 package ru.javawebinar.topjava.service;
 
+import javafx.scene.control.TableCellBuilder;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,6 +23,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +38,8 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final Logger LOG = LoggerFactory.getLogger(MealServiceTest.class);
 
-    private Long timeStamp;
     private static Map<String, Long> statistics = new HashMap<>();
 
     static {
@@ -53,18 +56,16 @@ public class MealServiceTest {
     public final TestRule watcher = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            System.out.println("Test took " + nanos/1000000 + " ms");
+            LOG.info("Test took " + nanos/1000000 + " ms");
             statistics.put(description.getMethodName(), nanos/1000000);
         }
     };
 
     @AfterClass
     public static void printStatistics() {
-        System.out.println("----- Statistics -----");
-        for (Map.Entry<String, Long> pair:statistics.entrySet()) {
-            System.out.println(pair.getKey() + " - " + pair.getValue() + " ms");
-        }
-        System.out.println("--------------------");
+        LOG.info("----- Statistics -----");
+        statistics.forEach((key, value) -> LOG.info("|{}|{} ms|", key, value));
+        LOG.info("--------------------");
     }
 
     @Test
