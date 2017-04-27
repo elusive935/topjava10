@@ -79,4 +79,8 @@ abstract public class UserServiceTest extends BaseServiceTest{
         service.update(updated);
         MATCHER.assertEquals(updated, service.get(USER_ID));
     }
+
+    public UserService getService() {
+        return service;
+    }
 }

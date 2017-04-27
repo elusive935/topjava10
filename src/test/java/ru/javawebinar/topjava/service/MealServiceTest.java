@@ -75,4 +75,8 @@ abstract public class MealServiceTest extends BaseServiceTest {
                         LocalDate.of(2015, Month.MAY, 30),
                         LocalDate.of(2015, Month.MAY, 30), USER_ID));
     }
+
+    public MealService getService() {
+        return service;
+    }
 }

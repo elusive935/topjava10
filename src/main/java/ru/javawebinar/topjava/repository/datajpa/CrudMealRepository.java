@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -22,4 +23,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     List<Meal> findAllByUserId(int userId, Sort sort);
 
     List<Meal> findAllByUserIdAndDateTimeBetween(int userId, LocalDateTime startDate, LocalDateTime endDate, Sort sort);
+
+    @EntityGraph(value = "Meal.detail", type = EntityGraph.EntityGraphType.LOAD)
+    Meal findById(int id);
 }
