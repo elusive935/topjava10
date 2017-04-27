@@ -29,7 +29,7 @@ abstract public class UserServiceTest extends BaseServiceTest{
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, Collections.singleton(Role.ROLE_USER));
         User created = service.save(newUser);
         newUser.setId(created.getId());
-        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, newUser, USER), service.getAll());
+        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, newUser, SLIM, USER), service.getAll());
     }
 
     @Test(expected = DataAccessException.class)
@@ -40,7 +40,7 @@ abstract public class UserServiceTest extends BaseServiceTest{
     @Test
     public void testDelete() throws Exception {
         service.delete(USER_ID);
-        MATCHER.assertCollectionEquals(Collections.singletonList(ADMIN), service.getAll());
+        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, SLIM), service.getAll());
     }
 
     @Test(expected = NotFoundException.class)
@@ -68,7 +68,7 @@ abstract public class UserServiceTest extends BaseServiceTest{
     @Test
     public void testGetAll() throws Exception {
         Collection<User> all = service.getAll();
-        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, USER), all);
+        MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, SLIM, USER), all);
     }
 
     @Test
