@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava;
 
-import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.matcher.ModelMatcher;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
 import java.util.Objects;
