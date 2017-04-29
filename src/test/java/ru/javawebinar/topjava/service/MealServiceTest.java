@@ -16,7 +16,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 abstract public class MealServiceTest extends BaseServiceTest {
     @Autowired
-    private MealService service;
+    protected MealService service;
 
     @Test
     public void testDelete() throws Exception {
@@ -76,7 +76,4 @@ abstract public class MealServiceTest extends BaseServiceTest {
                         LocalDate.of(2015, Month.MAY, 30), USER_ID));
     }
 
-    public MealService getService() {
-        return service;
-    }
 }

@@ -17,7 +17,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 abstract public class UserServiceTest extends BaseServiceTest{
     @Autowired
-    private UserService service;
+    protected UserService service;
 
     @Before
     public void setUp() throws Exception {
@@ -78,9 +78,5 @@ abstract public class UserServiceTest extends BaseServiceTest{
         updated.setCaloriesPerDay(330);
         service.update(updated);
         MATCHER.assertEquals(updated, service.get(USER_ID));
-    }
-
-    public UserService getService() {
-        return service;
     }
 }

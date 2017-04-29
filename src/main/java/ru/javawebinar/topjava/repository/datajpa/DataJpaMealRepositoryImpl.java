@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -50,7 +49,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal getWithUser(int id) {
-        return crudMealRepository.findById(id);
+    public Meal getWithUser(int id, int userId) {
+        return crudMealRepository.findFullByIdAndUserId(id, userId);
     }
 }

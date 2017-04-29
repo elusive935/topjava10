@@ -13,7 +13,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     @Override
     @Transactional
-    <S extends Meal> S save(S entity);
+    Meal save(Meal entity);
 
     @Transactional
     int deleteByIdAndUserId(int id, int userId);
@@ -25,5 +25,5 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     List<Meal> findAllByUserIdAndDateTimeBetween(int userId, LocalDateTime startDate, LocalDateTime endDate, Sort sort);
 
     @EntityGraph(value = "Meal.detail", type = EntityGraph.EntityGraphType.LOAD)
-    Meal findById(int id);
+    Meal findFullByIdAndUserId(int id, int userId);
 }

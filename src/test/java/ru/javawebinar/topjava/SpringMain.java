@@ -20,7 +20,7 @@ public class SpringMain {
         // java 7 Automatic resource management
         try (GenericXmlApplicationContext springContext = new GenericXmlApplicationContext()) {
 
-            springContext.getEnvironment().setActiveProfiles("hsqldb", "datajpa");
+            springContext.getEnvironment().setActiveProfiles(Profiles.ACTIVE_DB, Profiles.REPOSITORY_IMPLEMENTATION);
             springContext.load("spring/spring-app.xml", "spring/spring-db.xml");
             springContext.refresh();
 

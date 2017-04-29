@@ -11,14 +11,14 @@ import static ru.javawebinar.topjava.MealTestData.ADMIN_MEALS;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles(Profiles.DATAJPA)
-public class UserServiceDataJpaTest extends UserServiceTest{
+public class DataJpaUserServiceTest extends UserServiceTest{
     @Test
     public void testGetWithMeals(){
-        User user = getService().getWithMeals(ADMIN_ID);
+        User user = service.getWithMeals(ADMIN_ID);
         MATCHER.assertEquals(ADMIN, user);
         MealTestData.MATCHER.assertCollectionEquals(ADMIN_MEALS, user.getMeals());
 
-        User userSlim = getService().getWithMeals(SLIM_ID);
+        User userSlim = service.getWithMeals(SLIM_ID);
         MATCHER.assertEquals(SLIM, userSlim);
         Assert.assertEquals(true, userSlim.getMeals().isEmpty());
     }
