@@ -12,7 +12,6 @@ import java.util.List;
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     @Override
-    @Transactional
     Meal save(Meal entity);
 
     @Transactional
