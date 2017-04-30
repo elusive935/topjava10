@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 abstract public class BaseServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(MealServiceTest.class);
     private static StringBuilder results = new StringBuilder();
+    private static String currentClass = null;
 
     static {
         // needed only for java.util.logging (postgres driver)
@@ -45,15 +46,21 @@ abstract public class BaseServiceTest {
             String result = String.format("%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
             results.append(result).append('\n');
             LOG.info(result + " ms\n");
+            if (currentClass == null) {
+                currentClass = description.getTestClass().getSimpleName();
+            }
         }
     };
 
     @AfterClass
     public static void printResult() {
+        LOG.info(currentClass);
         LOG.info("\n---------------------------------" +
                 "\nTest                 Duration, ms" +
                 "\n---------------------------------\n" +
                 results +
                 "---------------------------------\n");
+        results = new StringBuilder();
+        currentClass = null;
     }
 }
