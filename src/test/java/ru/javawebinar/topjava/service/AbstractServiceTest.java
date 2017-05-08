@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static ru.javawebinar.topjava.Profiles.JDBC;
 
 @ContextConfiguration({
-        "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-test.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)
