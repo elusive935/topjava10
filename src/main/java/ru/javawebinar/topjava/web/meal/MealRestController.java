@@ -1,77 +1,88 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import ru.javawebinar.topjava.AuthorizedUser;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.util.MealsUtil;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.checkIdConsistent;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @Controller
-public class MealRestController {
-    private static final Logger LOG = LoggerFactory.getLogger(MealRestController.class);
-
-    private final MealService service;
+@RequestMapping(value = "/meals")
+public class MealRestController extends AbstractMealController {
 
     @Autowired
     public MealRestController(MealService service) {
-        this.service = service;
+        super(service);
     }
 
-    public Meal get(int id) {
-        int userId = AuthorizedUser.id();
-        LOG.info("get meal {} for User {}", id, userId);
-        return service.get(id, userId);
+    @PostMapping(value = "/filter")
+    protected String filterMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
+        LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
+        LocalTime startTime = DateTimeUtil.parseLocalTime(request.getParameter("startTime"));
+        LocalTime endTime = DateTimeUtil.parseLocalTime(request.getParameter("endTime"));
+        request.setAttribute("meals", getBetween(startDate, startTime, endDate, endTime));
+        return ("meals");
     }
 
-    public void delete(int id) {
-        int userId = AuthorizedUser.id();
-        LOG.info("delete meal {} for User {}", id, userId);
-        service.delete(id, userId);
+    @GetMapping
+    protected String getMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("meals", getAll());
+        return ("meals");
     }
 
-    public List<MealWithExceed> getAll() {
-        int userId = AuthorizedUser.id();
-        LOG.info("getAll for User {}", userId);
-        return MealsUtil.getWithExceeded(service.getAll(userId), AuthorizedUser.getCaloriesPerDay());
+    @GetMapping(value = "/create")
+    protected String createMeal(HttpServletRequest request) {
+        Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
+        request.setAttribute("meal", meal);
+        return ("meal");
     }
 
-    public Meal create(Meal meal) {
-        int userId = AuthorizedUser.id();
-        checkNew(meal);
-        LOG.info("create {} for User {}", meal, userId);
-        return service.save(meal, userId);
+    @GetMapping(value = "/update/{id}")
+    protected String updateMeal(@PathVariable int id, HttpServletRequest request) {
+        final Meal meal = get(id);
+        request.setAttribute("meal", meal);
+        return ("meal");
     }
 
-    public void update(Meal meal, int id) {
-        int userId = AuthorizedUser.id();
-        checkIdConsistent(meal, id);
-        LOG.info("update {} for User {}", meal, userId);
-        service.update(meal, userId);
+    @PostMapping(value = "/save")
+    protected String saveMeal(HttpServletRequest request) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        final Meal meal = new Meal(
+                LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"),
+                Integer.valueOf(request.getParameter("calories")));
+
+        if (request.getParameter("id").isEmpty()) {
+            create(meal);
+        } else {
+            update(meal, getId(request));
+        }
+        return ("redirect:/meals");
     }
 
-    public List<MealWithExceed> getBetween(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        int userId = AuthorizedUser.id();
-        LOG.info("getBetween dates({} - {}) time({} - {}) for User {}", startDate, endDate, startTime, endTime, userId);
+    @GetMapping(value = "/delete/{id}")
+    protected String deleteMeal(@PathVariable int id) {
+        delete(id);
+        return ("redirect:/meals");
+    }
 
-        return MealsUtil.getFilteredWithExceeded(
-                service.getBetweenDates(
-                        startDate != null ? startDate : DateTimeUtil.MIN_DATE,
-                        endDate != null ? endDate : DateTimeUtil.MAX_DATE, userId),
-                startTime != null ? startTime : LocalTime.MIN,
-                endTime != null ? endTime : LocalTime.MAX,
-                AuthorizedUser.getCaloriesPerDay()
-        );
+    private int getId(HttpServletRequest request) {
+        String paramId = Objects.requireNonNull(request.getParameter("id"));
+        return Integer.valueOf(paramId);
     }
 }
