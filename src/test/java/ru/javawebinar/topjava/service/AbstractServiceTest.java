@@ -1,8 +1,6 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -10,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -20,6 +20,7 @@ import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static ru.javawebinar.topjava.Profiles.JDBC;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -30,8 +31,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 abstract public class AbstractServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractServiceTest.class);
-
     private static StringBuilder results = new StringBuilder();
+    @Autowired
+    protected Environment environment;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -81,5 +83,13 @@ abstract public class AbstractServiceTest {
             result = cause;
         }
         return result;
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        String[] profiles = environment.getActiveProfiles();
+        for (String s : profiles) {
+            Assume.assumeFalse(JDBC.equals(s));
+        }
     }
 }
