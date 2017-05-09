@@ -119,11 +119,7 @@ public class User extends NamedEntity {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(Role role){
+    public void addRole(Role role) {
         if (role == null) {
             return;
         }
@@ -134,7 +130,7 @@ public class User extends NamedEntity {
         roles.add(role);
     }
 
-    public void addRole(Set<Role> newRoles){
+    public void addRole(Set<Role> newRoles) {
         if (newRoles == null || newRoles.isEmpty()) {
             return;
         }
@@ -143,6 +139,13 @@ public class User extends NamedEntity {
             return;
         }
         roles.addAll(newRoles);
+    }
+
+    public void deleteRole(Role role) {
+        if (role == null) {
+            return;
+        }
+        roles.remove(role);
     }
 
     public String getPassword() {
