@@ -9,9 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
@@ -119,6 +117,32 @@ public class User extends NamedEntity {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void addRole(Role role){
+        if (role == null) {
+            return;
+        }
+        if (roles == null) {
+            roles = new HashSet<>(Collections.singleton(role));
+            return;
+        }
+        roles.add(role);
+    }
+
+    public void addRole(Set<Role> newRoles){
+        if (newRoles == null || newRoles.isEmpty()) {
+            return;
+        }
+        if (roles == null) {
+            roles = new HashSet<>(newRoles);
+            return;
+        }
+        roles.addAll(newRoles);
     }
 
     public String getPassword() {

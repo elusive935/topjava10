@@ -9,11 +9,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import javax.sql.DataSource;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -62,18 +65,57 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
-        return DataAccessUtils.singleResult(users);
+        User result = DataAccessUtils.singleResult(users);
+
+        List<Role> roles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id=?", (rs, rowNum) ->
+                Role.valueOf(rs.getString("role")), id);
+        result.setRoles(new HashSet<>(roles));
+        return result;
     }
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        return DataAccessUtils.singleResult(users);
+        User result = DataAccessUtils.singleResult(users);
+
+        List<Role> roles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id=?", (rs, rowNum) ->
+                Role.valueOf(rs.getString("role")), result.getId());
+
+        result.setRoles(new HashSet<>(roles));
+        return result;
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        List<User> queryResult = jdbcTemplate.query("SELECT * FROM users LEFT OUTER JOIN user_roles ON users.id = user_roles.user_id " +
+                                                                                "ORDER BY name, email", new RowMapperUser(User.class));
+        return extractRolesAndAdd(queryResult);
+    }
+
+    private List<User> extractRolesAndAdd(List<User> queryResult){
+        Map<Integer, User> map = new HashMap<>();
+        for (User user:queryResult) {
+            int id = user.getId();
+            if (map.containsKey(id)) {
+                map.get(id).addRole(user.getRoles());
+            } else {
+                map.put(id, user);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    private class RowMapperUser extends BeanPropertyRowMapper<User> {
+        public RowMapperUser(Class<User> mappedClass) {
+            super(mappedClass);
+        }
+
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User result = super.mapRow(rs, rowNum);
+            String role = rs.getString("role");
+            result.addRole(Role.valueOf(role));
+            return result;
+        }
     }
 }
