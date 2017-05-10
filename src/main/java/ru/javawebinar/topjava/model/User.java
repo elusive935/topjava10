@@ -141,13 +141,6 @@ public class User extends NamedEntity {
         roles.addAll(newRoles);
     }
 
-    public void deleteRole(Role role) {
-        if (role == null) {
-            return;
-        }
-        roles.remove(role);
-    }
-
     public String getPassword() {
         return password;
     }

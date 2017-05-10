@@ -33,7 +33,7 @@ abstract public class AbstractServiceTest {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractServiceTest.class);
     private static StringBuilder results = new StringBuilder();
     @Autowired
-    protected Environment environment;
+    private Environment environment;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
