@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class JdbcUserRepositoryImpl implements UserRepository {
 
-    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final RowMapperUser ROW_MAPPER_USER = new RowMapperUser(User.class);
+    private static final RowMapperRoles ROW_MAPPER_ROLES = new RowMapperRoles();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -47,38 +48,25 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Transactional
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-        String sql = "INSERT INTO user_roles (user_id, role) VALUES (?, ?)";
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            jdbcTemplate.batchUpdate(sql, new RolesBatchPreparedStatementSetter(user.getId(), user.getRoles()));
+            updateInBatches(user.getId(), new ArrayList<>(user.getRoles()), false);
         } else {
             namedParameterJdbcTemplate.update(
                     "UPDATE users SET name=:name, email=:email, password=:password, " +
                             "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource);
 
-            Set<Role> rolesToAdd = new HashSet<>();
-            Set<Role> rolesToDelete = new HashSet<>();
-
-            List<Role> currentRoles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id=?", new RowMapperRoles(), user.getId());
+            List<Role> currentRoles = jdbcTemplate.query("SELECT * FROM user_roles WHERE user_id=?", ROW_MAPPER_ROLES, user.getId());
             List<Role> targetRoles = new ArrayList<>(user.getRoles());
+            List<Role> targetRolesDuplicate = new ArrayList<>(user.getRoles());
 
-            for (Role currentRole : currentRoles) {
-                if (!targetRoles.contains(currentRole)) {
-                    rolesToDelete.add(currentRole);
-                }
-            }
-            for (Role targetRole : targetRoles) {
-                if (!currentRoles.contains(targetRole)) {
-                    rolesToAdd.add(targetRole);
-                }
-            }
+            targetRoles.removeAll(currentRoles);
+            currentRoles.removeAll(targetRolesDuplicate);
 
-            jdbcTemplate.batchUpdate(sql, new RolesBatchPreparedStatementSetter(user.getId(), rolesToAdd));
-            for (Role role : rolesToDelete) {
-                jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=? AND role=?", user.getId(), role.toString());
-            }
+            updateInBatches(user.getId(), targetRoles, false);
+            updateInBatches(user.getId(), currentRoles, true);
         }
         return user;
     }
@@ -92,21 +80,21 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Override
     public User get(int id) {
         List<User> queryResult = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ON users.id = user_roles.user_id WHERE id=?",
-                new RowMapperUser(User.class), id);
+                ROW_MAPPER_USER, id);
         return getSingleUserWithRoles(queryResult);
     }
 
     @Override
     public User getByEmail(String email) {
         List<User> queryResult = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ON users.id = user_roles.user_id WHERE email=?",
-                new RowMapperUser(User.class), email);
+                ROW_MAPPER_USER, email);
         return getSingleUserWithRoles(queryResult);
     }
 
     @Override
     public List<User> getAll() {
         List<User> queryResult = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ON users.id = user_roles.user_id ",
-                new RowMapperUser(User.class));
+                ROW_MAPPER_USER);
         return getUsersWithRoles(queryResult);
     }
 
@@ -134,7 +122,26 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         return map.values();
     }
 
-    private class RowMapperUser extends BeanPropertyRowMapper<User> {
+    private void updateInBatches(int id, List<Role> roles, boolean isDelete){
+        final String sql = isDelete ?
+                      "DELETE FROM user_roles WHERE user_id=? AND role=?"
+                    : "INSERT INTO user_roles (user_id, role) VALUES (?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, id);
+                ps.setString(2, roles.get(i).toString());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return roles.size();
+            }
+        });
+    }
+
+    private static class RowMapperUser extends BeanPropertyRowMapper<User> {
         RowMapperUser(Class<User> mappedClass) {
             super(mappedClass);
         }
@@ -148,31 +155,10 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         }
     }
 
-    private class RowMapperRoles extends BeanPropertyRowMapper{
+    private static class RowMapperRoles extends BeanPropertyRowMapper{
         @Override
         public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
             return Role.valueOf(rs.getString("role"));
-        }
-    }
-
-    private class RolesBatchPreparedStatementSetter implements BatchPreparedStatementSetter{
-        private int id;
-        private List<Role> roles;
-
-        RolesBatchPreparedStatementSetter(int id, Set<Role> roles) {
-            this.id = id;
-            this.roles = new ArrayList<>(roles);
-        }
-
-        @Override
-        public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setInt(1, id);
-            ps.setString(2, roles.get(i).toString());
-        }
-
-        @Override
-        public int getBatchSize() {
-            return roles.size();
         }
     }
 }

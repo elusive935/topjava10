@@ -12,7 +12,6 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +29,7 @@ public class MealRestController extends AbstractMealController {
     }
 
     @PostMapping(value = "/filter")
-    protected String filterMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected String filterMeals(HttpServletRequest request) throws ServletException, IOException {
         LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = DateTimeUtil.parseLocalTime(request.getParameter("startTime"));
@@ -40,7 +39,7 @@ public class MealRestController extends AbstractMealController {
     }
 
     @GetMapping
-    protected String getMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected String getMeals(HttpServletRequest request) throws ServletException, IOException {
         request.setAttribute("meals", getAll());
         return ("meals");
     }
