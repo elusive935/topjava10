@@ -60,7 +60,6 @@ public class MealRestController extends AbstractMealController {
 
     @PostMapping(value = "/save")
     protected String saveMeal(HttpServletRequest request) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
         final Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
