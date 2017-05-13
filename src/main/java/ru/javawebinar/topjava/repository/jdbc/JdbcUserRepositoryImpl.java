@@ -98,34 +98,34 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         return getUsersWithRoles(queryResult);
     }
 
-    private List<User> getUsersWithRoles(List<User> queryResult){
+    private List<User> getUsersWithRoles(List<User> queryResult) {
         return extractRoles(queryResult)
                 .stream()
                 .sorted(Comparator.comparing(User::getName).thenComparing(User::getEmail))
                 .collect(Collectors.toList());
     }
 
-    private User getSingleUserWithRoles(List<User> queryResult){
+    private User getSingleUserWithRoles(List<User> queryResult) {
         return DataAccessUtils.singleResult(extractRoles(queryResult));
     }
 
     private Collection<User> extractRoles(List<User> queryResult) {
         Map<Integer, User> map = new HashMap<>();
-        for (User user : queryResult) {
+        queryResult.forEach(user -> {
             int id = user.getId();
-            if (map.containsKey(id)) {
-                map.get(id).addRole(user.getRoles());
-            } else {
-                map.put(id, user);
-            }
-        }
+            map.computeIfPresent(id, (key, presentUser) -> {
+                presentUser.addRole(user.getRoles());
+                return presentUser;
+            });
+            map.computeIfAbsent(id, key -> user);
+        });
         return map.values();
     }
 
-    private void updateInBatches(int id, List<Role> roles, boolean isDelete){
-        final String sql = isDelete ?
-                      "DELETE FROM user_roles WHERE user_id=? AND role=?"
-                    : "INSERT INTO user_roles (user_id, role) VALUES (?, ?)";
+    private void updateInBatches(int id, List<Role> roles, boolean toDelete) {
+        final String sql = toDelete ?
+                "DELETE FROM user_roles WHERE user_id=? AND role=?"
+                : "INSERT INTO user_roles (user_id, role) VALUES (?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
@@ -155,7 +155,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         }
     }
 
-    private static class RowMapperRoles extends BeanPropertyRowMapper{
+    private static class RowMapperRoles extends BeanPropertyRowMapper {
         @Override
         public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
             return Role.valueOf(rs.getString("role"));

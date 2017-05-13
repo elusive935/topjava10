@@ -10,7 +10,17 @@
 <section>
     <base href="${pageContext.request.contextPath}/"/>
     <h2><a href="index.html"><spring:message code="app.home"/></a></h2>
-    <h2><spring:message code="meal.titleupdate"/></h2>
+    <h2>
+        <c:choose>
+            <c:when test="${meal.id == null}">
+                <spring:message code="meal.titlecreate"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="meal.titleupdate"/>
+            </c:otherwise>
+        </c:choose>
+    </h2>
+
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="meals/save">
