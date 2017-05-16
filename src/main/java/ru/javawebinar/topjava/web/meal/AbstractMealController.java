@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -20,8 +19,11 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 public abstract class AbstractMealController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private MealService service;
+
+    public AbstractMealController(MealService service) {
+        this.service = service;
+    }
 
     public Meal get(int id) {
         int userId = AuthorizedUser.id();
