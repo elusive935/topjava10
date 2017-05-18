@@ -8,5 +8,4 @@ import java.lang.annotation.Target;
 @Target(value={ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CustomDateFormatter {
-    String value();
 }

@@ -25,6 +25,10 @@ public class MealWithExceed {
         this.exceed = exceed;
     }
 
+    public MealWithExceed() {
+        this(0, null, null, 0, false);
+    }
+
     public Integer getId() {
         return id;
     }
