@@ -43,12 +43,4 @@ public class RootControllerTest extends AbstractControllerTest {
                         )
                 )));
     }
-
-    @Test
-    public void resourceControllerTest() throws Exception {
-        mockMvc.perform(get("/resources/css/style.css"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/css"));
-    }
 }
