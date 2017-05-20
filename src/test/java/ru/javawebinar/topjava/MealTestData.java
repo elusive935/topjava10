@@ -30,14 +30,6 @@ public class MealTestData {
 
     public static final List<Meal> MEALS = Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
 
-    public static final MealWithExceed MEAL1_exc = new MealWithExceed(MEAL1_ID, of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, false);
-    public static final MealWithExceed MEAL2_exc = new MealWithExceed(MEAL1_ID + 1, of(2015, Month.MAY, 30, 13, 0), "Обед", 1000, false);
-    public static final MealWithExceed MEAL3_exc = new MealWithExceed(MEAL1_ID + 2, of(2015, Month.MAY, 30, 20, 0), "Ужин", 500, false);
-    public static final MealWithExceed MEAL4_exc = new MealWithExceed(MEAL1_ID + 3, of(2015, Month.MAY, 31, 10, 0), "Завтрак", 500, true);
-    public static final MealWithExceed MEAL5_exc = new MealWithExceed(MEAL1_ID + 4, of(2015, Month.MAY, 31, 13, 0), "Обед", 1000, true);
-    public static final MealWithExceed MEAL6_exc = new MealWithExceed(MEAL1_ID + 5, of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, true);
-    public static final List<MealWithExceed> MEALS_EXC = Arrays.asList(MEAL6_exc, MEAL5_exc, MEAL4_exc, MEAL3_exc, MEAL2_exc, MEAL1_exc);
-
     public static Meal getCreated() {
         return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин", 300);
     }

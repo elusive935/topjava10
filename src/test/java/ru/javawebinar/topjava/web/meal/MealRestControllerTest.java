@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
@@ -45,7 +46,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(MEALS_EXC));
+                .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(MealsUtil.getWithExceeded(MEALS, 2000)));
     }
 
     @Test
@@ -71,11 +72,11 @@ public class MealRestControllerTest extends AbstractControllerTest {
         Meal updated = MEAL5;
         updated.setCalories(1999);
         updated.setDescription("UpdatedMeal");
-        ResultActions resultActions = mockMvc.perform(put(REST_URL + (MEAL1_ID + 4))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)));
 
-        resultActions.andExpect(status().isOk());
+        mockMvc.perform(put(REST_URL + (MEAL1_ID + 4))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isOk());
 
         MATCHER.assertEquals(updated, mealService.get(MEAL1_ID + 4, USER_ID));
     }
@@ -89,7 +90,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(Arrays.asList(MEAL6_exc, MEAL5_exc)));
+                .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(Arrays.asList(MealsUtil.createWithExceed(MEAL6, true),
+                        MealsUtil.createWithExceed(MEAL5, true))));
     }
 
 }
