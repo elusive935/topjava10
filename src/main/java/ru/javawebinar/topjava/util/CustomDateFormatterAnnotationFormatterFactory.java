@@ -7,7 +7,6 @@ import org.springframework.format.Printer;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -35,20 +34,14 @@ public class CustomDateFormatterAnnotationFormatterFactory implements Annotation
 
     private static class CustomFormatter implements Formatter<LocalDateTime> {
 
-        private DateTimeFormatter formatter;
-
-        public CustomFormatter() {
-            this.formatter = ISO_LOCAL_DATE_TIME;
-        }
-        
         @Override
         public LocalDateTime parse(String text, Locale locale) throws ParseException {
-            return LocalDateTime.parse(text, formatter);
+            return LocalDateTime.parse(text, ISO_LOCAL_DATE_TIME);
         }
 
         @Override
         public String print(LocalDateTime object, Locale locale) {
-            return object.format(formatter);
+            return object.format(ISO_LOCAL_DATE_TIME);
         }
     }
 
