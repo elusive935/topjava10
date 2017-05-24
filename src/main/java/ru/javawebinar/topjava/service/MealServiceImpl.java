@@ -28,7 +28,8 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public void delete(int id, int userId) {
-        checkNotFoundWithId(repository.delete(id, userId), id);
+        boolean delete = repository.delete(id, userId);
+        checkNotFoundWithId(delete, id);
     }
 
     @Override
@@ -40,7 +41,8 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.getAll(userId);
+        List<Meal> mealList = repository.getAll(userId);
+        return mealList;
     }
 
     @Override

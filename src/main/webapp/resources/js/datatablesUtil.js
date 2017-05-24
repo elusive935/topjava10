@@ -29,6 +29,17 @@ function deleteRow(id) {
     });
 }
 
+function deleteMeal(id) {
+    $.ajax({
+        url: ajaxUrl + "/" +id,
+        type: 'DELETE',
+        success: function () {
+            updateTableMeals();
+            successNoty('Deleted');
+        }
+    });
+}
+
 function updateTable() {
     $.get(ajaxUrl, function (data) {
         datatableApi.clear();
@@ -36,6 +47,16 @@ function updateTable() {
             datatableApi.row.add(item);
         });
         datatableApi.draw();
+    });
+}
+
+function updateTableMeals() {
+    $.get(ajaxUrl, function (data) {
+        datatableApiMeal.clear();
+        $.each(data, function (key, item) {
+            datatableApiMeal.row.add(item);
+        });
+        datatableApiMeal.draw();
     });
 }
 
