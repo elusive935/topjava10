@@ -20,7 +20,7 @@
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
 
-                <table class="table table-striped display" id="datatable">
+                <table class="table table-striped display" id="usersdatatable">
                     <thead>
                     <tr>
                         <th><spring:message code="users.name"/></th>
@@ -39,8 +39,8 @@
                             <td><a href="mailto:${user.email}">${user.email}</a></td>
                             <td>${user.roles}</td>
                             <td>
-                                <input type="checkbox"
-                                       <c:if test="${user.enabled}">checked</c:if> id="${user.id}"/>
+                                <input type="checkbox" id="activation"
+                                       <c:if test="${user.enabled}">checked</c:if> userId="${user.id}" onchange="updateUser()"/>
                             </td>
                             <td><fmt:formatDate value="${user.registered}" pattern="dd-MMMM-yyyy"/></td>
                             <td><a class="btn btn-xs btn-primary">

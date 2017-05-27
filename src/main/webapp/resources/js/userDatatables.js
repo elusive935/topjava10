@@ -1,9 +1,9 @@
-var ajaxUrl = 'ajax/admin/users/';
-var datatableApi;
+var ajaxUrl = 'ajax/admin/users';
+var dataTableApi;
 
 // $(document).ready(function () {
 $(function () {
-    datatableApi = $('#datatable').DataTable({
+    dataTableApi = $('#usersDataTable').DataTable({
         "paging": false,
         "info": true,
         "columns": [
@@ -40,3 +40,13 @@ $(function () {
     });
     makeEditable();
 });
+
+function updateUser(){
+    var act = $('#activation');
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + "/activation",
+        data: act.serialize(),
+        success: updateTable()
+    });
+}

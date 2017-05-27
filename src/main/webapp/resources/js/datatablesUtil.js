@@ -20,7 +20,7 @@ function add() {
 
 function deleteRow(id) {
     $.ajax({
-        url: ajaxUrl + id,
+        url: ajaxUrl + '/' + id,
         type: 'DELETE',
         success: function () {
             updateTable();
@@ -28,35 +28,13 @@ function deleteRow(id) {
         }
     });
 }
-
-function deleteMeal(id) {
-    $.ajax({
-        url: ajaxUrl + "/" +id,
-        type: 'DELETE',
-        success: function () {
-            updateTableMeals();
-            successNoty('Deleted');
-        }
-    });
-}
-
 function updateTable() {
     $.get(ajaxUrl, function (data) {
-        datatableApi.clear();
+        dataTableApi.clear();
         $.each(data, function (key, item) {
-            datatableApi.row.add(item);
+            dataTableApi.row.add(item);
         });
-        datatableApi.draw();
-    });
-}
-
-function updateTableMeals() {
-    $.get(ajaxUrl, function (data) {
-        datatableApiMeal.clear();
-        $.each(data, function (key, item) {
-            datatableApiMeal.row.add(item);
-        });
-        datatableApiMeal.draw();
+        dataTableApi.draw();
     });
 }
 

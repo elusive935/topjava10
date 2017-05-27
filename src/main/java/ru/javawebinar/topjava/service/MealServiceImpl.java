@@ -2,8 +2,8 @@ package ru.javawebinar.topjava.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.javawebinar.topjava.model.Meal;
 import org.springframework.util.Assert;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
@@ -28,8 +28,7 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public void delete(int id, int userId) {
-        boolean delete = repository.delete(id, userId);
-        checkNotFoundWithId(delete, id);
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
     @Override
@@ -41,8 +40,7 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public List<Meal> getAll(int userId) {
-        List<Meal> mealList = repository.getAll(userId);
-        return mealList;
+        return repository.getAll(userId);
     }
 
     @Override

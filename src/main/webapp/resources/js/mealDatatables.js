@@ -1,8 +1,13 @@
 var ajaxUrl = 'ajax/meals';
-var datatableApiMeal;
+var dataTableApi;
 
 $(function () {
-    datatableApiMeal = $('#datatableMeals').DataTable({
+    $('#startDate').datetimepicker({timepicker : false, format:'Y-m-d'});
+    $('#startTime').datetimepicker({datepicker : false, format:'H:i'});
+    $('#endDate').datetimepicker({timepicker : false, format:'Y-m-d'});
+    $('#endTime').datetimepicker({datepicker : false, format:'H:i'});
+    $('#dateTime').datetimepicker({format:'Y-m-d H:i'});
+    dataTableApi = $('#mealsDataTable').DataTable({
         "paging":false,
         "info":true,
         "columns":[
@@ -17,5 +22,24 @@ $(function () {
             [0, "desc"]
         ]
     });
-    // makeEditable();
+    makeEditable();
 });
+
+function clearFilter(){
+    $('#filter')[0].reset();
+}
+
+function updateTableWithFilter() {
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + "/filter",
+        data: $("#filter").serialize(),
+        success: function(data){
+            dataTableApi.clear();
+            $.each(data, function (key, item) {
+                dataTableApi.row.add(item);
+            });
+            dataTableApi.draw();
+        }
+    })
+}
