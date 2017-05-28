@@ -7,7 +7,7 @@ $(function () {
     $('#endDate').datetimepicker({timepicker : false, format:'Y-m-d'});
     $('#endTime').datetimepicker({datepicker : false, format:'H:i'});
     $('#dateTime').datetimepicker({format:'Y-m-d H:i'});
-    dataTableApi = $('#mealsDataTable').DataTable({
+    dataTableApi = $('#datatable').DataTable({
         "paging":false,
         "info":true,
         "columns":[
@@ -27,6 +27,7 @@ $(function () {
 
 function clearFilter(){
     $('#filter')[0].reset();
+    updateTable();
 }
 
 function updateTableWithFilter() {
@@ -34,12 +35,6 @@ function updateTableWithFilter() {
         type: "POST",
         url: ajaxUrl + "/filter",
         data: $("#filter").serialize(),
-        success: function(data){
-            dataTableApi.clear();
-            $.each(data, function (key, item) {
-                dataTableApi.row.add(item);
-            });
-            dataTableApi.draw();
-        }
+        success: fillTable
     })
 }

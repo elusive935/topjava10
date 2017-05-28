@@ -23,6 +23,15 @@ dd {
     color: red;
 }
 
+.enabled {
+
+}
+
+.disabled {
+    color: lightgray;
+    font-style: italic;
+}
+
 header, footer {
     background: none repeat scroll 0 0 #A6C9E2;
     color: #2E6E9E;

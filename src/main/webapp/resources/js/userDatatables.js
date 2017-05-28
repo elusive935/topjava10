@@ -3,7 +3,7 @@ var dataTableApi;
 
 // $(document).ready(function () {
 $(function () {
-    dataTableApi = $('#usersDataTable').DataTable({
+    dataTableApi = $('#datatable').DataTable({
         "paging": false,
         "info": true,
         "columns": [
@@ -41,12 +41,12 @@ $(function () {
     makeEditable();
 });
 
-function updateUser(){
+function updateUser(userId){
     var act = $('#activation');
     $.ajax({
         type: "POST",
         url: ajaxUrl + "/activation",
-        data: act.serialize(),
+        data: {userId:userId, enabled:act.is(':checked')},
         success: updateTable()
     });
 }

@@ -29,13 +29,11 @@ function deleteRow(id) {
     });
 }
 function updateTable() {
-    $.get(ajaxUrl, function (data) {
-        dataTableApi.clear();
-        $.each(data, function (key, item) {
-            dataTableApi.row.add(item);
-        });
-        dataTableApi.draw();
-    });
+    $.get(ajaxUrl, fillTable);
+}
+
+function fillTable(data){
+    dataTableApi.clear().rows.add(data).draw();
 }
 
 function save() {

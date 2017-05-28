@@ -59,7 +59,7 @@
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
 
-                <table class="table table-striped display" id="mealsDataTable">
+                <table class="table table-striped display" id="datatable">
                     <thead>
                     <tr>
                         <th><spring:message code="meals.dateTime"/></th>
