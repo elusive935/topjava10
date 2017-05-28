@@ -41,12 +41,11 @@ $(function () {
     makeEditable();
 });
 
-function updateUser(userId){
-    var act = $('#activation');
+function updateUser(userId, checkbox){
     $.ajax({
         type: "POST",
         url: ajaxUrl + "/activation",
-        data: {userId:userId, enabled:act.is(':checked')},
+        data: {userId:userId, enabled:checkbox.is(':checked')},
         success: updateTable()
     });
 }
