@@ -92,7 +92,6 @@
 </div>
 </body>
 <script type="text/javascript">
-    var i18n = [];
     i18n["addTitle"] = '<spring:message code="users.add"/>';
     i18n["editTitle"] = '<spring:message code="users.edit"/>';
 

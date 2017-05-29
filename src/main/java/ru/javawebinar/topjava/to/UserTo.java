@@ -24,7 +24,7 @@ public class UserTo implements Serializable {
     @Size(min = 5, max = 64, message = " must between 5 and 64 characters")
     private String password;
 
-    @Range(min = 10, max = 10000)
+    @Range(min = 10, max = 10000, message = " must be from 10 to 10000")
     @NotNull
     private Integer caloriesPerDay = UserUtil.DEFAULT_CALORIES_PER_DAY;
 

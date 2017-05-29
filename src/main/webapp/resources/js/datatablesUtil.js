@@ -1,4 +1,5 @@
 var form;
+var i18n = [];
 
 function makeEditable() {
     form = $('#detailsForm');
