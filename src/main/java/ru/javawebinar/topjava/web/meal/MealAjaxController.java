@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -25,6 +26,12 @@ public class MealAjaxController extends AbstractMealController {
     }
 
     @Override
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Meal get(@PathVariable("id") int id) {
+        return super.get(id);
+    }
+
+    @Override
     @DeleteMapping(value = "/{id}")
     public void delete(@PathVariable("id") int id) {
         super.delete(id);
@@ -37,9 +44,10 @@ public class MealAjaxController extends AbstractMealController {
             result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
             return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        Meal meal = new Meal(mealTo.getId(), mealTo.getDateTime(), mealTo.getDescription(), mealTo.getCalories());
-        if (meal.isNew()) {
-            super.create(meal);
+        if (mealTo.isNew()) {
+            super.create(MealsUtil.createNewFromTo(mealTo));
+        } else {
+            super.update(mealTo);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -70,6 +70,10 @@ public class MealTo implements Serializable {
         this.calories = calories;
     }
 
+    public boolean isNew(){
+        return id == null;
+    }
+
     @Override
     public String toString() {
         return "MealTo{" +
