@@ -16,8 +16,10 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.TestUtil.userAuth;
 import static ru.javawebinar.topjava.UserTestData.USER;
 import static ru.javawebinar.topjava.model.BaseEntity.START_SEQ;
 
@@ -30,7 +32,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + MEAL1_ID))
+        mockMvc.perform(get(REST_URL + MEAL1_ID)
+                .with(userAuth(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -39,7 +42,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + MEAL1_ID))
+        mockMvc.perform(delete(REST_URL + MEAL1_ID)
+                .with(userAuth(USER)))
                 .andExpect(status().isOk());
         MATCHER.assertCollectionEquals(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), service.getAll(START_SEQ));
     }
@@ -49,7 +53,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
         Meal updated = getUpdated();
 
         mockMvc.perform(put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeValue(updated))
+                .with(userAuth(USER)))
                 .andExpect(status().isOk());
 
         assertEquals(updated, service.get(MEAL1_ID, START_SEQ));
@@ -60,7 +65,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
         Meal created = getCreated();
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(created)));
+                .content(JsonUtil.writeValue(created))
+                .with(userAuth(USER)));
 
         Meal returned = MATCHER.fromJsonAction(action);
         created.setId(returned.getId());
@@ -71,7 +77,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetAll() throws Exception {
-        mockMvc.perform(get(REST_URL))
+        mockMvc.perform(get(REST_URL)
+                .with(userAuth(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -82,7 +89,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
     public void testFilter() throws Exception {
         mockMvc.perform(get(REST_URL + "filter")
                 .param("startDate", "2015-05-30").param("startTime", "07:00")
-                .param("endDate", "2015-05-31").param("endTime", "11:00"))
+                .param("endDate", "2015-05-31").param("endTime", "11:00")
+                .with(userAuth(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(
@@ -92,10 +100,19 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testFilterAll() throws Exception {
-        mockMvc.perform(get(REST_URL + "filter?startDate=&endTime="))
+        mockMvc.perform(get(REST_URL + "filter?startDate=&endTime=")
+                .with(userAuth(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(MATCHER_WITH_EXCEED.contentListMatcher(
                         MealsUtil.getWithExceeded(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1), USER.getCaloriesPerDay())));
+    }
+
+    @Test
+    public void testUnAuth() throws Exception{
+        mockMvc.perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
     }
 }
