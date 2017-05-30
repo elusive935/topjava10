@@ -39,7 +39,7 @@ $(function () {
                 "data": "dateTime",
                 "render": function (data, type, row) {
                     if (type == 'display') {
-                        return '${fn:formatDateTime(' + data + ')}';
+                        return '<span>' + data.substring(0, 10) + ' ' + data.substring(11, 16) + '</span>';
                     }
                     return data;
                 }

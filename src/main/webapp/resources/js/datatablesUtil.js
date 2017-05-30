@@ -22,6 +22,8 @@ function updateRow(id) {
         $.each(data, function (key, value) {
             form.find("input[name='" + key + "']").val(value);
         });
+        var datetime = $("#dateTime").val().replace('T', ' ');
+        $("#dateTime").val(datetime);
         $('#editRow').modal();
     });
 }
