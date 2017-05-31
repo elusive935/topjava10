@@ -15,17 +15,9 @@ function clearFilter() {
     $.get(ajaxUrl, updateTableByData);
 }
 
-
-//     <%--<fmt:parseDate value="${meal.dateTime}" pattern="y-M-dd'T'H:m" var="parsedDate"/>--%>
-// <%--<fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm" />--%>
-
-
-
 $(function () {
-    $('#startDate').datetimepicker({timepicker : false, format:'Y-m-d'});
-    $('#startTime').datetimepicker({datepicker : false, format:'H:i'});
-    $('#endDate').datetimepicker({timepicker : false, format:'Y-m-d'});
-    $('#endTime').datetimepicker({datepicker : false, format:'H:i'});
+    $('#startDate, #endDate').datetimepicker({timepicker : false, format:'Y-m-d'});
+    $('#startTime, #endTime').datetimepicker({datepicker : false, format:'H:i'});
     $('#dateTime').datetimepicker({format:'Y-m-d H:i'});
     datatableApi = $("#datatable").DataTable({
         "ajax":{

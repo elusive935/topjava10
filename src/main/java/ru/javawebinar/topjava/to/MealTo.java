@@ -20,7 +20,7 @@ public class MealTo implements Serializable {
     @NotBlank
     private String description;
 
-    @Range(min = 10, max = 10000, message = " must be from 10 to 10000")
+    @Range(min = 10, max = 5000, message = " must be from 10 to 5000")
     @NotNull
     private Integer calories;
 
