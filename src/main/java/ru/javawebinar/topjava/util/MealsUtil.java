@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.to.MealWithExceed;

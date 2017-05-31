@@ -68,11 +68,8 @@ $(function () {
             ]
         ],
         "createdRow": function (row, data, dataIndex) {
-            if (data.exceed) {
-                $(row).addClass("exceeded");
-            } else {
+            data.exceed ? $(row).addClass("exceeded"):
                 $(row).addClass("normal");
-            }
         },
         "initComplete": makeEditable
     });

@@ -22,7 +22,7 @@ function updateRow(id) {
         $.each(data, function (key, value) {
             form.find("input[name='" + key + "']").val(value);
         });
-        var datetime = $("#dateTime").val().replace('T', ' ');
+        var datetime = $("#dateTime").val().substring(0, 10) + ' ' + $("#dateTime").val().substring(11, 16);
         $("#dateTime").val(datetime);
         $('#editRow').modal();
     });

@@ -22,12 +22,12 @@ public class MealTo implements Serializable {
 
     @Range(min = 10, max = 10000, message = " must be from 10 to 10000")
     @NotNull
-    private int calories;
+    private Integer calories;
 
     public MealTo() {
     }
 
-    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories) {
+    public MealTo(Integer id, LocalDateTime dateTime, String description, Integer calories) {
         this.id = id;
         this.dateTime = dateTime;
         this.description = description;
@@ -62,11 +62,11 @@ public class MealTo implements Serializable {
         this.description = description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(Integer calories) {
         this.calories = calories;
     }
 

@@ -14,6 +14,8 @@ import ru.javawebinar.topjava.util.UserUtil;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkBindingResult;
+
 @RestController
 @RequestMapping("/ajax/admin/users")
 public class AdminAjaxController extends AbstractUserController {
@@ -43,10 +45,9 @@ public class AdminAjaxController extends AbstractUserController {
 
     @PostMapping
     public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
-        if (result.hasErrors()) {
-            StringBuilder sb = new StringBuilder();
-            result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
-            return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+        ResponseEntity<String> responseEntity = checkBindingResult(result);
+        if (responseEntity != null) {
+            return responseEntity;
         }
         if (userTo.isNew()) {
             super.create(UserUtil.createNewFromTo(userTo));
@@ -54,6 +55,7 @@ public class AdminAjaxController extends AbstractUserController {
             super.update(userTo);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @Override
