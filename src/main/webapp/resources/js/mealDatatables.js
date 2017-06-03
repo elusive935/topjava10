@@ -31,7 +31,7 @@ $(function () {
                 "data": "dateTime",
                 "render": function (data, type, row) {
                     if (type == 'display') {
-                        return '<span>' + data.substring(0, 10) + ' ' + data.substring(11, 16) + '</span>';
+                        return data.replace('T', ' ').substring(0, 16);
                     }
                     return data;
                 }
@@ -60,8 +60,7 @@ $(function () {
             ]
         ],
         "createdRow": function (row, data, dataIndex) {
-            data.exceed ? $(row).addClass("exceeded"):
-                $(row).addClass("normal");
+            $(row).addClass(data.exceed ? "exceeded" : "normal");
         },
         "initComplete": makeEditable
     });
