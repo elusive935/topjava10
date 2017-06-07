@@ -81,8 +81,14 @@ function successNoty(key) {
 function failNoty(jqXHR) {
     closeNoty();
     var errorInfo = $.parseJSON(jqXHR.responseText);
+    var text = i18n['common.errorStatus'] + ': ' + jqXHR.status + '<br>'+ errorInfo.cause;
+    if (errorInfo.localizedMessage != null) {
+        text = text + '<br>' + i18n[errorInfo.localizedMessage];
+    } else {
+        text = text + '<br>' + errorInfo.detail;
+    }
     failedNote = noty({
-        text: i18n['common.errorStatus'] + ': ' + jqXHR.status + '<br>'+ errorInfo.cause + '<br>' + errorInfo.detail,
+        text: text,
         type: 'error',
         layout: 'bottomRight'
     });

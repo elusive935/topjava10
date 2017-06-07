@@ -30,7 +30,7 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return logAndGetErrorInfo(req, e, true);
+        return getErrorInfoWithLocalizedMsg(req, e, false, "users.dublicateEmail");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -49,4 +49,11 @@ public class ExceptionInfoHandler {
         }
         return new ErrorInfo(req.getRequestURL(), rootCause);
     }
+
+    private static ErrorInfo getErrorInfoWithLocalizedMsg(HttpServletRequest req, Exception e, boolean logException, String localizedMessage) {
+        ErrorInfo errorInfo = logAndGetErrorInfo(req, e, logException);
+        errorInfo.setLocalizedMessage(localizedMessage);
+        return errorInfo;
+    }
+
 }
