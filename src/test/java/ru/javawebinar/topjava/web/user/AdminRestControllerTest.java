@@ -82,6 +82,16 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testInvalidData() throws Exception{
+        String json = "{\"name\":\"UpdatedName\",\"email\":\"\",\"password\":\"password\",\"enabled\":true,\"registered\":\"2017-06-07T05:21:24.201+0000\",\"roles\":[\"ROLE_USER\"],\"caloriesPerDay\":2005}";
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(json))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     public void testUpdate() throws Exception {
         User updated = new User(USER);
         updated.setName("UpdatedName");

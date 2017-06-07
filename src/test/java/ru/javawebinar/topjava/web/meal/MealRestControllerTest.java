@@ -70,6 +70,16 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testInvalidData() throws Exception{
+        String json = "{\"dateTime\":\"2015-05-30T10:00:00\",\"description\":\"\",\"calories\":200}";
+        mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     public void testUpdate() throws Exception {
         Meal updated = getUpdated();
 

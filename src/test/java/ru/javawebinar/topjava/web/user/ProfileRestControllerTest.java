@@ -56,4 +56,14 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
 
         MATCHER.assertEquals(UserUtil.updateFromTo(new User(USER), updatedTo), userService.getByEmail("newemail@ya.ru"));
     }
+
+    @Test
+    public void testInvalidDate() throws Exception {
+        String json = "{\"name\":\"newName\",\"email\":\"newemail@ya.ru\",\"password\":\"\",\"caloriesPerDay\":1500}";
+        mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+    }
 }
