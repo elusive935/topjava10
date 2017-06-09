@@ -4,6 +4,7 @@ public class ErrorInfo {
     private final String url;
     private final String cause;
     private final String detail;
+    private String message;
     private String localizedMessage;
 
     public ErrorInfo(CharSequence url, Throwable ex) {
@@ -15,6 +16,10 @@ public class ErrorInfo {
     public ErrorInfo(CharSequence url, Throwable ex, String localizedMessage) {
         this(url, ex);
         this.localizedMessage = localizedMessage;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setLocalizedMessage(String localizedMessage) {
