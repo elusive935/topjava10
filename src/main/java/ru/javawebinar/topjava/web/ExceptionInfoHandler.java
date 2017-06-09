@@ -29,14 +29,6 @@ public class ExceptionInfoHandler {
 
     //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(java.net.BindException.class)
-    @ResponseBody
-    public ErrorInfo handleBindError(HttpServletRequest req, NotFoundException e) {
-        return logAndGetErrorInfo(req, e, false);
-    }
-
-    //  http://stackoverflow.com/a/22358422/548473
-    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(BindException.class)
     @ResponseBody
     public ErrorInfo handleSpringBindError(HttpServletRequest req, BindException e) {
@@ -47,7 +39,13 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return getErrorInfoWithLocalizedMsg(req, e, false, "users.dublicateEmail");
+        ErrorInfo errorInfo = logAndGetErrorInfo(req, e, false);
+        if (req.getServletPath().contains("admin")) {
+            errorInfo.setLocalizedMessage("users.dublicateEmail");
+        } else if (req.getServletPath().contains("meal")) {
+            errorInfo.setLocalizedMessage("meals.dublicateDate");
+        }
+        return errorInfo;
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,18 +65,10 @@ public class ExceptionInfoHandler {
         return new ErrorInfo(req.getRequestURL(), rootCause);
     }
 
-    private static ErrorInfo getErrorInfoWithLocalizedMsg(HttpServletRequest req, Exception e, boolean logException, String localizedMessage) {
-        ErrorInfo errorInfo = logAndGetErrorInfo(req, e, logException);
-        errorInfo.setLocalizedMessage(localizedMessage);
-        return errorInfo;
-    }
-
     private static ErrorInfo getSpringErrorInfo(HttpServletRequest req, BindException e){
         ErrorInfo errorInfo = new ErrorInfo(req.getRequestURL(), ValidationUtil.getRootCause(e));
         errorInfo.setMessage(ValidationUtil.getErrorResponse(e.getBindingResult()));
         return errorInfo;
     }
-
-
 
 }
