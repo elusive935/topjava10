@@ -11,4 +11,7 @@ public class View {
     // http://forum.spring.io/forum/spring-projects/web/117289-validated-s-given-groups-should-consider-default-group-or-not
     public interface ValidatedUI {
     }
+
+    public interface ValidatedREST {
+    }
 }

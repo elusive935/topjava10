@@ -59,10 +59,10 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testInvalidDate() throws Exception {
-        String json = "{\"name\":\"newName\",\"email\":\"newemail@ya.ru\",\"password\":\"\",\"caloriesPerDay\":1500}";
+        UserTo user = new UserTo(null, null, null, null, 0);
         mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
-                .content(json))
+                .content(JsonUtil.writeValue(user)))
                 .andDo(print())
                 .andExpect(status().isInternalServerError());
     }

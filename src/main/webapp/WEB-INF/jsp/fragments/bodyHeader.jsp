@@ -18,6 +18,16 @@
                         <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
                     </button>
                 </sec:authorize>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            ${pageContext.response.locale}
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="?lang=en">English</a></li>
+                        <li><a href="?lang=ru">Русский</a></li>
+                    </ul>
+                </li>
             </form:form>
         </div>
     </div>

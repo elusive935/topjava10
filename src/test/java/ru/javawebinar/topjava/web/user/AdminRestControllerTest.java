@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -83,11 +85,11 @@ public class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testInvalidData() throws Exception{
-        String json = "{\"name\":\"UpdatedName\",\"email\":\"\",\"password\":\"password\",\"enabled\":true,\"registered\":\"2017-06-07T05:21:24.201+0000\",\"roles\":[\"ROLE_USER\"],\"caloriesPerDay\":2005}";
+        User user = new User(null, "Name", USER.getEmail(), "pass", 1000, Role.ROLE_USER);
         mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(json))
+                .content(JsonUtil.writeValue(user)))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -118,6 +120,17 @@ public class AdminRestControllerTest extends AbstractControllerTest {
 
         MATCHER.assertEquals(expected, returned);
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, expected, USER), userService.getAll());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void testDuplicateEmail() throws Exception {
+        User expected = new User(null, "New", USER.getEmail(), "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(expected)))
+                .andExpect(status().isConflict());
     }
 
     @Test

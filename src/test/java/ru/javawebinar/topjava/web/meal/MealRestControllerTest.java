@@ -3,15 +3,20 @@ package ru.javawebinar.topjava.web.meal;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import java.time.Month;
 import java.util.Arrays;
 
+import static java.time.LocalDateTime.of;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -71,10 +76,10 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testInvalidData() throws Exception{
-        String json = "{\"dateTime\":\"2015-05-30T10:00:00\",\"description\":\"\",\"calories\":200}";
+        Meal meal = new Meal(null, null, 0);
         mockMvc.perform(put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
+                .content(JsonUtil.writeValue(meal))
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isInternalServerError());
     }
@@ -90,6 +95,18 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk());
 
         assertEquals(updated, service.get(MEAL1_ID, START_SEQ));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void testDuplicateDate() throws Exception {
+        Meal meal = new Meal(of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500);
+        MvcResult mvcResult = mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(meal))
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isConflict())
+                .andReturn();
     }
 
     @Test
